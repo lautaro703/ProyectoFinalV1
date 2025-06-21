@@ -14,7 +14,5 @@ namespace ProyectoFinal.Models
         public string Nombre { get; set; }
      
         public string Email { get; set; }
-
-        //ublic List<Transaccion> Transacciones { get; set; }
     }
 }

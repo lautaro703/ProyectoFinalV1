@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoFinal.Models;
 
@@ -11,9 +12,11 @@ using ProyectoFinal.Models;
 namespace ProyectoFinal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250617061155_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,6 +46,16 @@ namespace ProyectoFinal.Migrations
                     b.ToTable("Clientes");
                 });
 
+            modelBuilder.Entity("ProyectoFinal.Models.Criptomoneda", b =>
+                {
+                    b.Property<string>("Codigo")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Codigo");
+
+                    b.ToTable("Criptomonedas");
+                });
+
             modelBuilder.Entity("ProyectoFinal.Models.Transaccion", b =>
                 {
                     b.Property<int>("Id")
@@ -61,6 +74,9 @@ namespace ProyectoFinal.Migrations
                     b.Property<int>("ClienteId")
                         .HasColumnType("int");
 
+                    b.Property<string>("CriptomonedaCodigo")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("CryptoCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -73,7 +89,21 @@ namespace ProyectoFinal.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CriptomonedaCodigo");
+
                     b.ToTable("Transacciones");
+                });
+
+            modelBuilder.Entity("ProyectoFinal.Models.Transaccion", b =>
+                {
+                    b.HasOne("ProyectoFinal.Models.Criptomoneda", null)
+                        .WithMany("Transacciones")
+                        .HasForeignKey("CriptomonedaCodigo");
+                });
+
+            modelBuilder.Entity("ProyectoFinal.Models.Criptomoneda", b =>
+                {
+                    b.Navigation("Transacciones");
                 });
 #pragma warning restore 612, 618
         }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProyectoFinal.Models;
 
@@ -11,9 +12,11 @@ using ProyectoFinal.Models;
 namespace ProyectoFinal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250619035618_MODIFICACION")]
+    partial class MODIFICACION
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,7 +76,25 @@ namespace ProyectoFinal.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ClienteId");
+
                     b.ToTable("Transacciones");
+                });
+
+            modelBuilder.Entity("ProyectoFinal.Models.Transaccion", b =>
+                {
+                    b.HasOne("ProyectoFinal.Models.Clientes", "Cliente")
+                        .WithMany("Transacciones")
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cliente");
+                });
+
+            modelBuilder.Entity("ProyectoFinal.Models.Clientes", b =>
+                {
+                    b.Navigation("Transacciones");
                 });
 #pragma warning restore 612, 618
         }

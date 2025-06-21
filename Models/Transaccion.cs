@@ -9,17 +9,10 @@ namespace ProyectoFinal.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "El código de la criptomoneda es obligatorio.")]
-        [ForeignKey("Criptomoneda")]
-        public string cryptoCode { get; set; }
+       
+        public string CryptoCode { get; set; }
 
-        //public Criptomoneda Criptomoneda { get; set; }
-
-      
-       // public Clientes Clientes { get; set; }
-
-        
-
-        public string accion { get; set; }
+        public string Accion { get; set; }
 
         [Required(ErrorMessage = "El cliente es obligatorio.")]
         [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar un cliente válido.")]
@@ -31,10 +24,12 @@ namespace ProyectoFinal.Models
 
         [Required(ErrorMessage = "El monto en ARS es obligatorio.")]
         [Range(0.00000001, double.MaxValue, ErrorMessage = "El monto debe ser mayor a 0.")]
-        public decimal monto { get; set; }
+        public decimal Monto { get; set; }
 
         [Required(ErrorMessage = "La fecha y hora son obligatorias.")]
-        public DateTime fechaHora { get; set; }
+        public DateTime FechaHora { get; set; }
+
+        
     }
 }
 

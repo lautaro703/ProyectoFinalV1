@@ -7,7 +7,6 @@ namespace ProyectoFinal.Models
         public AppDbContext(DbContextOptions<AppDbContext> options): base(options) { }
 
         public DbSet<Clientes> Clientes { get; set; }
-        public DbSet<Criptomoneda> Criptomonedas { get; set; }
         public DbSet<Transaccion> Transacciones { get; set; }
     }
 }

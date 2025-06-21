@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProyectoFinal.Migrations
 {
     /// <inheritdoc />
-    public partial class Migracion : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -43,9 +43,8 @@ namespace ProyectoFinal.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CryptoCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ClienteId = table.Column<int>(type: "int", nullable: false),
-                    ClientesId = table.Column<int>(type: "int", nullable: false),
                     Accion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ClienteId = table.Column<int>(type: "int", nullable: false),
                     Cantidad = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Monto = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     FechaHora = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -55,22 +54,11 @@ namespace ProyectoFinal.Migrations
                 {
                     table.PrimaryKey("PK_Transacciones", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Transacciones_Clientes_ClientesId",
-                        column: x => x.ClientesId,
-                        principalTable: "Clientes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_Transacciones_Criptomonedas_CriptomonedaCodigo",
                         column: x => x.CriptomonedaCodigo,
                         principalTable: "Criptomonedas",
                         principalColumn: "Codigo");
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Transacciones_ClientesId",
-                table: "Transacciones",
-                column: "ClientesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transacciones_CriptomonedaCodigo",
@@ -82,10 +70,10 @@ namespace ProyectoFinal.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Transacciones");
+                name: "Clientes");
 
             migrationBuilder.DropTable(
-                name: "Clientes");
+                name: "Transacciones");
 
             migrationBuilder.DropTable(
                 name: "Criptomonedas");

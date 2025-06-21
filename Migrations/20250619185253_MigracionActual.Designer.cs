@@ -12,8 +12,8 @@ using ProyectoFinal.Models;
 namespace ProyectoFinal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250611012745_partemigracion")]
-    partial class partemigracion
+    [Migration("20250619185253_MigracionActual")]
+    partial class MigracionActual
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,16 +46,6 @@ namespace ProyectoFinal.Migrations
                     b.ToTable("Clientes");
                 });
 
-            modelBuilder.Entity("ProyectoFinal.Models.Criptomoneda", b =>
-                {
-                    b.Property<string>("Codigo")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Codigo");
-
-                    b.ToTable("Criptomonedas");
-                });
-
             modelBuilder.Entity("ProyectoFinal.Models.Transaccion", b =>
                 {
                     b.Property<int>("Id")
@@ -64,46 +54,29 @@ namespace ProyectoFinal.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Accion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Cantidad")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ClienteId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CriptomonedaCodigo")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("accion")
+                    b.Property<string>("CryptoCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("cryptoCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("fechaHora")
+                    b.Property<DateTime>("FechaHora")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("monto")
+                    b.Property<decimal>("Monto")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CriptomonedaCodigo");
-
                     b.ToTable("Transacciones");
-                });
-
-            modelBuilder.Entity("ProyectoFinal.Models.Transaccion", b =>
-                {
-                    b.HasOne("ProyectoFinal.Models.Criptomoneda", null)
-                        .WithMany("Transacciones")
-                        .HasForeignKey("CriptomonedaCodigo");
-                });
-
-            modelBuilder.Entity("ProyectoFinal.Models.Criptomoneda", b =>
-                {
-                    b.Navigation("Transacciones");
                 });
 #pragma warning restore 612, 618
         }

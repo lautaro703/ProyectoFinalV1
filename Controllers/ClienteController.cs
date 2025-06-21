@@ -17,6 +17,25 @@ namespace ProyectoFinal.Controllers
             _appDbContext = appDbContext;
         }
 
+        [HttpGet("validar/{id}")]
+        public async Task<IActionResult> ValidarCliente(int id)
+        {
+            var cliente = await _appDbContext.Clientes.FindAsync(id);
+            if (cliente == null)
+                return NotFound(); 
+            return Ok(cliente); 
+        }
+
+        [HttpGet("listar")]
+        public async Task<IActionResult> ListarClientes()
+        {
+            var clientes = await _appDbContext.Clientes
+                .Select(c => new { c.Id, c.Nombre })
+                .ToListAsync();
+
+            return Ok(clientes);
+        }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ClienteDto>>> Get()
         {
@@ -41,7 +60,6 @@ namespace ProyectoFinal.Controllers
             _appDbContext.Clientes.Add(clientes);
             await _appDbContext.SaveChangesAsync();
 
-            // Corrección: usar el ID real
             return CreatedAtAction(nameof(Get), new { id = clientes.Id }, clientes);
         }
 

@@ -12,8 +12,8 @@ using ProyectoFinal.Models;
 namespace ProyectoFinal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250610225141_Migracion")]
-    partial class Migracion
+    [Migration("20250618042159_montototal")]
+    partial class montototal
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,16 +46,6 @@ namespace ProyectoFinal.Migrations
                     b.ToTable("Clientes");
                 });
 
-            modelBuilder.Entity("ProyectoFinal.Models.Criptomoneda", b =>
-                {
-                    b.Property<string>("Codigo")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Codigo");
-
-                    b.ToTable("Criptomonedas");
-                });
-
             modelBuilder.Entity("ProyectoFinal.Models.Transaccion", b =>
                 {
                     b.Property<int>("Id")
@@ -74,12 +64,6 @@ namespace ProyectoFinal.Migrations
                     b.Property<int>("ClienteId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ClientesId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CriptomonedaCodigo")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("CryptoCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -92,36 +76,7 @@ namespace ProyectoFinal.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientesId");
-
-                    b.HasIndex("CriptomonedaCodigo");
-
                     b.ToTable("Transacciones");
-                });
-
-            modelBuilder.Entity("ProyectoFinal.Models.Transaccion", b =>
-                {
-                    b.HasOne("ProyectoFinal.Models.Clientes", "Clientes")
-                        .WithMany("Transacciones")
-                        .HasForeignKey("ClientesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProyectoFinal.Models.Criptomoneda", null)
-                        .WithMany("Transacciones")
-                        .HasForeignKey("CriptomonedaCodigo");
-
-                    b.Navigation("Clientes");
-                });
-
-            modelBuilder.Entity("ProyectoFinal.Models.Clientes", b =>
-                {
-                    b.Navigation("Transacciones");
-                });
-
-            modelBuilder.Entity("ProyectoFinal.Models.Criptomoneda", b =>
-                {
-                    b.Navigation("Transacciones");
                 });
 #pragma warning restore 612, 618
         }
