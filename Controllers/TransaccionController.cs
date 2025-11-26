@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
+using System.Numerics;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ProyectoFinal.DTOs;
 using ProyectoFinal.Models;
 
@@ -18,11 +20,10 @@ namespace ProyectoFinal.Controllers
         }
 
         [HttpGet]
-
         public async Task<ActionResult<IEnumerable<TransaccionDTO>>> Get()
         {
             var transacciones = await _context.Transacciones
-                
+
                 .ToListAsync();
 
             var transaccioneDtos = transacciones.Select(t => new TransaccionDTO
@@ -31,7 +32,7 @@ namespace ProyectoFinal.Controllers
                 CryptoCode = t.CryptoCode,
                 Accion = t.Accion,
                 ClienteId = t.ClienteId,
-                Cantidad=t.Cantidad,
+                Cantidad = t.Cantidad,
                 Monto = t.Monto,
                 FechaHora = t.FechaHora
 
@@ -48,57 +49,7 @@ namespace ProyectoFinal.Controllers
                 .ToListAsync();
         }
 
-        /*[HttpGet("precio")]
-        public async Task<IActionResult> ObtenerPrecio(string codigo, decimal cantidad)
-        {
-            using var httpClient = new HttpClient();
-            string url = $"https://criptoya.com/api/bybit/{codigo}/ARS/{cantidad.ToString(System.Globalization.CultureInfo.InvariantCulture)}";
 
-            try
-            {
-                var response = await httpClient.GetAsync(url);
-                if (!response.IsSuccessStatusCode)
-                    return BadRequest("Error al obtener precio desde CriptoYa");
-
-                var contenido = await response.Content.ReadAsStringAsync();
-                return Content(contenido, "application/json");
-            }
-            catch
-            {
-                return StatusCode(500, "Error interno");
-            }
-        }*/
-
-        [HttpGet("precio")]
-        public async Task<IActionResult> ObtenerMonto(string codigo, decimal cantidad)
-        {
-            if (string.IsNullOrEmpty(codigo) || cantidad <= 0)
-                return BadRequest("Código o cantidad inválida.");
-
-            try
-            {
-                using var httpClient = new HttpClient();
-                var response = await httpClient.GetAsync($"https://criptoya.com/api/{codigo}/ars");
-
-                if (!response.IsSuccessStatusCode)
-                    return StatusCode(502, "Error al consultar CriptoYa.");
-
-                var data = await response.Content.ReadAsStringAsync();
-                var json = JsonDocument.Parse(data);
-
-                if (!json.RootElement.TryGetProperty("totalbid", out var precioJson))
-                    return BadRequest("Respuesta inválida de CriptoYa.");
-
-                decimal precio = precioJson.GetDecimal();
-                decimal monto = precio * cantidad;
-
-                return Ok(monto);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error interno: {ex.Message}");
-            }
-        }
 
         [HttpPost]
         public async Task<ActionResult<Transaccion>> Post([FromBody] Transaccion tranc)
@@ -120,30 +71,33 @@ namespace ProyectoFinal.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
+
         [HttpGet("{id}")]
 
         public async Task<ActionResult<TransaccionDTO>> Get(int id)
         {
             var transaccion = await _context.Transacciones
-              
-                .FirstOrDefaultAsync(t=>t.Id==id);
+
+                .FirstOrDefaultAsync(t => t.Id == id);
 
             if (transaccion == null)
                 return NotFound();
 
             var dto = new TransaccionDTO
             {
+                Id = transaccion.Id,
                 CryptoCode = transaccion.CryptoCode,
                 Accion = transaccion.Accion,
-                ClienteId = transaccion.Id,
-                Cantidad=transaccion.Cantidad,
+                ClienteId = transaccion.ClienteId,
+                Cantidad = transaccion.Cantidad,
                 Monto = transaccion.Monto,
                 FechaHora = transaccion.FechaHora
             };
             return Ok(dto);
         }
 
-        [HttpPut("{id}")]
+        /*[HttpPut("{id}")]
         public async Task<IActionResult>Put(int id, Transaccion transaccion)
         {
             if(id !=transaccion.Id)
@@ -151,7 +105,7 @@ namespace ProyectoFinal.Controllers
             _context.Entry(transaccion).State= EntityState.Modified;
             await _context.SaveChangesAsync();
             return NoContent();
-        }
+        }*/
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
@@ -168,6 +122,49 @@ namespace ProyectoFinal.Controllers
             return NoContent();
         }
 
+        [HttpDelete("EliminarTransaccionPorCliente/{clienteId}")]
+        public async Task<IActionResult> DeleteTRA(int clienteId)
+        {
+            var transacciones = await _context.Transacciones
+                .Where(t => t.ClienteId == clienteId)
+                .ToListAsync();
+            if (transacciones == null || transacciones.Count == 0)
+            {
+                return NotFound();
+            }
+            _context.Transacciones.RemoveRange(transacciones);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpGet("obtenerPrecioAsync")]
+        public async Task<decimal> obtenerPrecioAsync(string exchange, decimal cantidad, string cripto)
+        {
+            using (HttpClient cliente = new HttpClient())
+            {
+                string url = $"https://criptoya.com/api/{exchange}/{cripto}/ars";
+
+                HttpResponseMessage respuesta = await cliente.GetAsync(url);
+
+                if (respuesta.IsSuccessStatusCode)
+                {
+                    string contenido = await respuesta.Content.ReadAsStringAsync();
+                    var datos = System.Text.Json.JsonDocument.Parse(contenido);
+
+                    if (!datos.RootElement.TryGetProperty("totalAsk", out var precioProp))
+                        return 0;
+
+                    decimal precioUnitario = precioProp.GetDecimal();
+                    decimal total = precioUnitario * cantidad;
+
+                    return total;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
     }
 }
     

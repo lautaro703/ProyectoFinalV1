@@ -17,15 +17,22 @@ namespace ProyectoFinal.Controllers
             _appDbContext = appDbContext;
         }
 
-        [HttpGet("validar/{id}")]
+        /*[HttpGet("validar/{id}")]
         public async Task<IActionResult> ValidarCliente(int id)
         {
             var cliente = await _appDbContext.Clientes.FindAsync(id);
             if (cliente == null)
                 return NotFound(); 
             return Ok(cliente); 
-        }
-
+        }*/
+        /*[HttpGet("validar-email/{email}")]
+        public async Task<IActionResult> ValidarEmail(string email)
+        {
+            var cliente = await _appDbContext.Clientes.FirstOrDefaultAsync(c => c.Email == email);
+            if (cliente == null)
+                return NotFound();
+            return Ok(cliente);
+        }*/
         [HttpGet("listar")]
         public async Task<IActionResult> ListarClientes()
         {
@@ -36,7 +43,17 @@ namespace ProyectoFinal.Controllers
             return Ok(clientes);
         }
 
-        [HttpGet]
+        [HttpGet("listarClientescompletos")]
+        public async Task<IActionResult>ListarClientesCompletos()
+        {
+            var clientes = await _appDbContext.Clientes
+                .Select(c => new { c.Id, c.Nombre, c.Email })
+                .ToListAsync();
+
+            return Ok(clientes);
+        }
+
+        /*[HttpGet]
         public async Task<ActionResult<IEnumerable<ClienteDto>>> Get()
         {
             var clientes = await _appDbContext.Clientes.ToListAsync();
@@ -49,8 +66,8 @@ namespace ProyectoFinal.Controllers
             }).ToList();
 
             return Ok(clientesDtos);
-        }
-
+        }*/
+        
         [HttpPost]
         public async Task<ActionResult<Clientes>> Post(Clientes clientes)
         {
@@ -62,7 +79,7 @@ namespace ProyectoFinal.Controllers
 
             return CreatedAtAction(nameof(Get), new { id = clientes.Id }, clientes);
         }
-
+        
         [HttpGet("{id}")]
         public async Task<ActionResult<ClienteDto>> Get(int id)
         {
@@ -89,7 +106,7 @@ namespace ProyectoFinal.Controllers
 
             _appDbContext.Entry(clientes).State = EntityState.Modified;
             await _appDbContext.SaveChangesAsync();
-
+              
             return NoContent();
         }
 

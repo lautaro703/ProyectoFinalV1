@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProyectoFinal.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class NuevaMigracion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -26,14 +26,14 @@ namespace ProyectoFinal.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Criptomonedas",
+                name: "Cryptos",
                 columns: table => new
                 {
                     Codigo = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Criptomonedas", x => x.Codigo);
+                    table.PrimaryKey("PK_Cryptos", x => x.Codigo);
                 });
 
             migrationBuilder.CreateTable(
@@ -54,9 +54,9 @@ namespace ProyectoFinal.Migrations
                 {
                     table.PrimaryKey("PK_Transacciones", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Transacciones_Criptomonedas_CriptomonedaCodigo",
+                        name: "FK_Transacciones_Cryptos_CriptomonedaCodigo",
                         column: x => x.CriptomonedaCodigo,
-                        principalTable: "Criptomonedas",
+                        principalTable: "Cryptos",
                         principalColumn: "Codigo");
                 });
 
@@ -76,7 +76,7 @@ namespace ProyectoFinal.Migrations
                 name: "Transacciones");
 
             migrationBuilder.DropTable(
-                name: "Criptomonedas");
+                name: "Cryptos");
         }
     }
 }

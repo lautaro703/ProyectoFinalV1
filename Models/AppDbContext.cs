@@ -8,5 +8,6 @@ namespace ProyectoFinal.Models
 
         public DbSet<Clientes> Clientes { get; set; }
         public DbSet<Transaccion> Transacciones { get; set; }
+        public DbSet<Criptomoneda> Cryptos { get; set; }
     }
 }
